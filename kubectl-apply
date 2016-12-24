@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# workaround because of namespace problem
+
+for file in $(find /var/www/repo/manifests -type f -name "*.yaml" | sort) ; do
+  namespace=$(kubectl convert --local --filename $file -o json | jq -e -r '.metadata.namespace') \
+    || namespace=''
+  kubectl  --namespace=$namespace apply --filename $file
+done
